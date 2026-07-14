@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+
+{% block title %}Settings - Voice Bot{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-12">
+        <h1>⚙️ Settings</h1>
+        <p class="text-muted">Configure your voice bot settings</p>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5>Bot Configuration</h5>
+            </div>
+            <div class="card-body">
+                <form>
+                    <div class="mb-3">
+                        <label class="form-label">Default Greeting</label>
+                        <textarea class="form-control" rows="3">Hello! You have reached the voice bot. How can I help you?</textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Max Call Duration (seconds)</label>
+                        <input type="number" class="form-control" value="300">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Silence Timeout (seconds)</label>
+                        <input type="number" class="form-control" value="10">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Language</label>
+                        <select class="form-select">
+                            <option>English (US)</option>
+                            <option>English (UK)</option>
+                            <option>Spanish</option>
+                            <option>French</option>
+                            <option>German</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Save Settings</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5>System Status</h5>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <strong>Asterisk Connection:</strong>
+                    <span class="badge bg-success">Connected</span>
+                </div>
+                <div class="mb-3">
+                    <strong>OpenAI API:</strong>
+                    <span class="badge bg-success">Connected</span>
+                </div>
+                <div class="mb-3">
+                    <strong>Database:</strong>
+                    <span class="badge bg-success">Connected</span>
+                </div>
+                <div class="mb-3">
+                    <strong>Speech-to-Text:</strong>
+                    <span class="badge bg-success">Ready</span>
+                </div>
+                <div class="mb-3">
+                    <strong>Text-to-Speech:</strong>
+                    <span class="badge bg-success">Ready</span>
+                </div>
+                <hr>
+                <button class="btn btn-info w-100">Test Connection</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h5>API Keys & Credentials</h5>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-warning" role="alert">
+                    🔒 Manage your API keys and credentials. Keep them secure and never share them.
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">OpenAI API Key</label>
+                    <div class="input-group">
+                        <input type="password" class="form-control" placeholder="sk-..." value="••••••••••••••••">
+                        <button class="btn btn-outline-secondary" type="button">Show</button>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Asterisk Password</label>
+                    <div class="input-group">
+                        <input type="password" class="form-control" placeholder="••••••••">
+                        <button class="btn btn-outline-secondary" type="button">Show</button>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary">Update Credentials</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,140 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - Voice Bot{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-12">
+        <h1>📊 Dashboard</h1>
+        <p class="text-muted">Monitor your voice bot activity in real-time</p>
+    </div>
+</div>
+
+<!-- Statistics Cards -->
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="card text-white bg-primary">
+            <div class="card-body">
+                <h5 class="card-title">Total Calls</h5>
+                <h2 id="total-calls">0</h2>
+                <small>All time</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-white bg-success">
+            <div class="card-body">
+                <h5 class="card-title">Answered</h5>
+                <h2 id="answered-calls">0</h2>
+                <small>Connected calls</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-white bg-danger">
+            <div class="card-body">
+                <h5 class="card-title">Missed</h5>
+                <h2 id="missed-calls">0</h2>
+                <small>Unanswered calls</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-white bg-info">
+            <div class="card-body">
+                <h5 class="card-title">Status</h5>
+                <h3 id="bot-status">🟢 Online</h3>
+                <small>System status</small>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Charts -->
+<div class="row mb-4">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5>Calls Over Time</h5>
+            </div>
+            <div class="card-body">
+                <canvas id="callsChart"></canvas>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5>Call Status Distribution</h5>
+            </div>
+            <div class="card-body">
+                <canvas id="statusChart"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Recent Calls -->
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h5>Recent Calls</h5>
+            </div>
+            <div class="card-body">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Caller</th>
+                            <th>Duration</th>
+                            <th>Status</th>
+                            <th>Time</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="recent-calls-table">
+                        <tr>
+                            <td colspan="5" class="text-center text-muted">Loading...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Load statistics
+    fetch('/api/stats')
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                document.getElementById('total-calls').textContent = data.stats.total_calls;
+                document.getElementById('answered-calls').textContent = data.stats.answered_calls;
+                document.getElementById('missed-calls').textContent = data.stats.missed_calls;
+            }
+        });
+
+    // Load recent calls
+    fetch('/api/calls')
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                const table = document.getElementById('recent-calls-table');
+                table.innerHTML = '';
+                data.calls.slice(0, 10).forEach(call => {
+                    const row = `
+                        <tr>
+                            <td>${call.caller_number}</td>
+                            <td>${call.duration}s</td>
+                            <td><span class="badge bg-${call.status === 'answered' ? 'success' : 'danger'}">${call.status}</span></td>
+                            <td>${new Date(call.created_at).toLocaleString()}</td>
+                            <td><a href="/api/calls/${call.id}" class="btn btn-sm btn-primary">View</a></td>
+                        </tr>
+                    `;
+                    table.innerHTML += row;
+                });
+            }
+        });
+</script>
+{% endblock %}

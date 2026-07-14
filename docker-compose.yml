@@ -1,0 +1,59 @@
+version: '3.8'
+
+services:
+  # Flask Web Application
+  app:
+    build: .
+    ports:
+      - "5000:5000"
+    environment:
+      - FLASK_ENV=production
+      - DATABASE_URL=postgresql://voicebot:password@db:5432/voicebot
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - ASTERISK_HOST=asterisk
+      - ASTERISK_PORT=5060
+    depends_on:
+      - db
+      - asterisk
+    volumes:
+      - ./logs:/app/logs
+      - ./recordings:/app/recordings
+    networks:
+      - voice-bot-network
+
+  # PostgreSQL Database
+  db:
+    image: postgres:13
+    environment:
+      POSTGRES_USER: voicebot
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: voicebot
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - voice-bot-network
+
+  # Asterisk VOIP Server
+  asterisk:
+    image: asterisk:latest
+    ports:
+      - "5060:5060/udp"
+      - "5060:5060/tcp"
+      - "10000-20000:10000-20000/udp"
+    volumes:
+      - ./asterisk_config/extensions.conf:/etc/asterisk/extensions.conf
+      - ./asterisk_config/pjsip.conf:/etc/asterisk/pjsip.conf
+      - ./asterisk_config/sip.conf:/etc/asterisk/sip.conf
+      - asterisk_data:/var/lib/asterisk
+    networks:
+      - voice-bot-network
+
+volumes:
+  postgres_data:
+  asterisk_data:
+
+networks:
+  voice-bot-network:
+    driver: bridge
